@@ -1,0 +1,6 @@
+@movie_watchlist.server_HostAddress = http://localhost:5046
+
+GET {{movie_watchlist.server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
