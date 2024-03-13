@@ -1,9 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using movie_watchlist.server.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<WatchlistsContext>(options =>
+{
+    //TODO: Add correct connection string
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"));
+
+    options.EnableDetailedErrors();
+});
 
 var app = builder.Build();
 
