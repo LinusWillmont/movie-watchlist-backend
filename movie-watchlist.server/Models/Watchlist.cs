@@ -13,7 +13,7 @@ namespace movie_watchlist.server.Models
 
         // References to other tables
         public List<WatchlistMovie> WatchlistMovie { get; } = [];
-        //public List<Movie> Movies { get; } = [];
+        public List<Movie> Movies { get; } = [];
 
         [ForeignKey(nameof(User))]
         [Required]
