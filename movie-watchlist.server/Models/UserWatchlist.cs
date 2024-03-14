@@ -3,29 +3,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace movie_watchlist.server.Models
 {
-    [Table("watchlists")]
-    public class Watchlist
+    [Table("users_watchlists")]
+    public class UserWatchlist
     {
+        // ids
         [Key]
         [Required]
         [Column("id")]
         public int Id { get; set; }
 
         // References to other tables
-        public List<WatchlistMovie> WatchlistMovie { get; } = [];
-        //public List<Movie> Movies { get; } = [];
-
         [ForeignKey(nameof(User))]
         [Required]
         [Column("user_id")]
         public int UserId { get; set; }
+        public User User { get; set; } = null!;
 
+        [ForeignKey(nameof(Watchlist))]
         [Required]
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("watchlist_id")]
+        public int WatchlistId { get; set; }
+        public Watchlist Watchlist { get; set; } = null!;
 
-        [Column("description")]
-        public string Description { get; set; }
+        //Properties
+        [Required]
+        [Column("archived")]
+        public bool Archived { get; set; } = false;
+
+        [Column("rating")]
+        public float? Rating { get; set; } = null;
 
         [Required]
         [Column("created_at")]
@@ -34,6 +40,7 @@ namespace movie_watchlist.server.Models
         [Required]
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
 
 
     }

@@ -3,30 +3,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace movie_watchlist.server.Models
 {
-    [Table("watchlists")]
-    public class Watchlist
+    [Table("watchlists_movies")]
+    public class WatchlistMovie
     {
+        //ids
         [Key]
         [Required]
         [Column("id")]
         public int Id { get; set; }
 
         // References to other tables
-        public List<WatchlistMovie> WatchlistMovie { get; } = [];
-        //public List<Movie> Movies { get; } = [];
-
-        [ForeignKey(nameof(User))]
+        [ForeignKey(nameof(Watchlist))]
         [Required]
-        [Column("user_id")]
-        public int UserId { get; set; }
+        [Column("watchlist_id")]
+        public int WatchlistId { get; set; }
+        public Watchlist Watchlist { get; set; } = null!;
 
+        [ForeignKey(nameof(Movie))]
         [Required]
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("movie_id")]
+        public int MovieId { get; set; }
+        public Movie Movie { get; set; } = null!;
 
-        [Column("description")]
-        public string Description { get; set; }
-
+        // Properties
         [Required]
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
