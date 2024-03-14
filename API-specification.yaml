@@ -46,7 +46,7 @@ paths:
             items:
               $ref: "#/definitions/Watchlists"
 
-  /watchlist/{watchlistId}:
+  /watchlists/{watchlistId}:
     get:
       summary: "Get a watchlist by ID"
       description: "Returns a single watchlist."
@@ -60,6 +60,30 @@ paths:
           description: "A single watchlist"
           schema:
             $ref: "#/definitions/Watchlist"
+
+    put:
+      summary: "Update watchlist metadata"
+      description: "Update the name and description of a watchlist."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          description: "Watchlist to be added"
+          schema:
+            type: "object"
+            properties:
+              Title:
+                type: "string"
+              description:
+                type: "string"
+
+      responses:
+        200:
+          description: "The updated watchlist data"
+
   /user/{userId}/watchlists:
     get:
       summary: "Get watchlists by user ID"
@@ -76,7 +100,7 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/WatchlistsByOneUser"
-  /watchlist/{watchlistId}/movies:
+  /watchlists/{watchlistId}/movies:
     put:
       summary: "Add a movie to a watchlist"
       description: "Adds a movie to the specified watchlist."
