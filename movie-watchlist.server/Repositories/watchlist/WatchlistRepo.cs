@@ -20,18 +20,17 @@ namespace movie_watchlist.server.Repositories.watchlist
             return watchlist.Entity;
         }
 
-        public async Task<bool> DeleteWatchlistAsync(int watchlistId)
+        public async Task<Watchlist?> DeleteWatchlistAsync(int watchlistId)
         {
             var watchlist = await GetWatchlistByIdAsync(watchlistId);
             if (watchlist == null)
             {
-                return false;
+                return null;
             }
 
             _db.Watchlists.Remove(watchlist);
 
-            int affectedRows = await _db.SaveChangesAsync();
-            return affectedRows > 0;
+            return watchlist;
         }
 
         public async Task<Watchlist?> GetWatchlistByIdAsync(int watchlistId)
