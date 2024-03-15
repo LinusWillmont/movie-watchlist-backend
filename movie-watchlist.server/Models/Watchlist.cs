@@ -34,7 +34,5 @@ namespace movie_watchlist.server.Models
         [Required]
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-
     }
 }

@@ -13,7 +13,7 @@ namespace movie_watchlist.server.Repositories.watchlist
             _db = db;
         }
 
-        public async Task<Watchlist?> CreateWatchlistAsync(string name, string description)
+        public async Task<Watchlist> CreateWatchlistAsync(string name, string description)
         {
             var watchlist = await _db.Watchlists.AddAsync(new Watchlist { Name = name, Description = description });
             await _db.SaveChangesAsync();
