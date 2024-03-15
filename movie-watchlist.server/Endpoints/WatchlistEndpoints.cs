@@ -31,6 +31,8 @@ namespace movie_watchlist.server.Endpoints
             return TypedResults.Ok(watchlistDTOList);
         }
 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         static private async Task<IResult> CreateWatchlist(IWatchlistRepo repository, WatchlistPayload payload)
         {
             string payloadCheckResponse = payload.CheckPayload();
