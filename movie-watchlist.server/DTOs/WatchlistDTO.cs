@@ -19,5 +19,15 @@ namespace movie_watchlist.server.DTOs
                 MovieIDs.Append(movie.Id);
             }
         }
+
+        static public List<WatchlistDTO> ArrayOfWatchlistDTOs(List<Watchlist> watchlists)
+        {
+            var watchlistList = new List<WatchlistDTO>();
+            foreach (var watchlist in watchlists)
+            {
+                watchlistList.Append(new WatchlistDTO(watchlist));
+            }
+            return watchlistList;
+        }
     }
 }

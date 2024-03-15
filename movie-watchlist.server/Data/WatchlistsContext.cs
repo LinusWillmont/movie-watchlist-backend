@@ -12,7 +12,6 @@ namespace movie_watchlist.server.Data
             // this.Database.EnsureCreated();
         }
 
-        // Add DbSets when models are created
         public DbSet<Watchlist> Watchlists { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<User> Users { get; set; }
