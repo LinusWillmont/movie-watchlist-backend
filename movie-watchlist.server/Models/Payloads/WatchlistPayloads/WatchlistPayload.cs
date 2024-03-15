@@ -1,4 +1,4 @@
-﻿namespace movie_watchlist.server.Models.Payloads
+﻿namespace movie_watchlist.server.Models.Payloads.WatchlistPayloads
 {
     public class WatchlistPayload : IPayload
     {
@@ -8,7 +8,7 @@
 
         public string CheckPayload()
         {
-            if (string.IsNullOrWhiteSpace(Name)) { return "Watchlist name is cant be empty"; }
+            if (string.IsNullOrWhiteSpace(Name)) { return "Watchlist name can't be empty"; }
             // Validate UserId
             return string.Empty;
         }

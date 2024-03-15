@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movie_watchlist.server.DTOs;
-using movie_watchlist.server.Models.Payloads;
+using movie_watchlist.server.Models.Payloads.WatchlistPayloads;
 using movie_watchlist.server.Repositories.watchlist;
 
 namespace movie_watchlist.server.Endpoints
@@ -14,6 +14,7 @@ namespace movie_watchlist.server.Endpoints
             watchlists.MapPost("", CreateWatchlist);
             watchlists.MapGet("", GetWatchlists);
             watchlists.MapGet("/{watchlistId}", GetWatchlistById);
+            watchlists.MapPut("/{watchlistId}", UpdateWatchlistMetadata);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -46,6 +47,8 @@ namespace movie_watchlist.server.Endpoints
             return TypedResults.Ok(watchlistDTOList);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         static private async Task<IResult> GetWatchlistById(IWatchlistRepo repository, int watchlistId)
         {
             var watchlist = await repository.GetWatchlistByIdAsync(watchlistId);
@@ -56,6 +59,26 @@ namespace movie_watchlist.server.Endpoints
             }
 
             return TypedResults.Ok(new WatchlistDTO(watchlist));
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        static private async Task<IResult> UpdateWatchlistMetadata(IWatchlistRepo repository, int watchlistId, WatchlistMetadataPayload payload)
+        {
+            var watchlistToUpdate = await repository.GetWatchlistByIdAsync(watchlistId);
+            if (watchlistToUpdate == null) { return TypedResults.NotFound($"Watchlist with id:{watchlistId} not found"); }
+
+            var updatedWatchlist = await repository.UpdateWatchlistAsync(
+                watchlistId,
+                payload.Name,
+                payload.Description,
+                watchlistToUpdate.Movies.Select(m => m.Id).ToList()
+            );
+
+            if (updatedWatchlist == null) { return TypedResults.NotFound($"Watchlist with id:{watchlistId} not found"); }
+
+
+            return TypedResults.Ok(new WatchlistDTO(updatedWatchlist));
         }
     }
 }

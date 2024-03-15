@@ -55,9 +55,10 @@ namespace movie_watchlist.server.Repositories.watchlist
                 return null;
             }
 
+            watchlist.Name = name;
+            watchlist.Description = description;
+            watchlist.UpdatedAt = DateTime.UtcNow;
             updateMovies();
-
-
 
             await _db.SaveChangesAsync();
 
