@@ -11,8 +11,23 @@ namespace movie_watchlist.server.Endpoints
         {
             var watchlists = app.MapGroup("/watchlists");
 
-            watchlists.MapGet("", GetWatchlists);
             watchlists.MapPost("", CreateWatchlist);
+            watchlists.MapGet("", GetWatchlists);
+            watchlists.MapGet("/{watchlistId}", GetWatchlistById);
+        }
+
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        static private async Task<IResult> CreateWatchlist(IWatchlistRepo repository, WatchlistPayload payload)
+        {
+            string payloadCheckResponse = payload.CheckPayload();
+            if (payloadCheckResponse != string.Empty)
+            {
+                return TypedResults.BadRequest(payloadCheckResponse);
+            }
+
+            var newWatchlist = await repository.CreateWatchlistAsync(name: payload.Name, description: payload.Description);
+            return TypedResults.Created($"/watchlists/{newWatchlist.Id}", new WatchlistDTO(newWatchlist));
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -31,18 +46,16 @@ namespace movie_watchlist.server.Endpoints
             return TypedResults.Ok(watchlistDTOList);
         }
 
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        static private async Task<IResult> CreateWatchlist(IWatchlistRepo repository, WatchlistPayload payload)
+        static private async Task<IResult> GetWatchlistById(IWatchlistRepo repository, int watchlistId)
         {
-            string payloadCheckResponse = payload.CheckPayload();
-            if (payloadCheckResponse != string.Empty)
+            var watchlist = await repository.GetWatchlistByIdAsync(watchlistId);
+
+            if (watchlist == null)
             {
-                return TypedResults.BadRequest(payloadCheckResponse);
+                return TypedResults.NotFound($"Watchlist with id:{watchlistId} not found");
             }
 
-            var newWatchlist = await repository.CreateWatchlistAsync(name: payload.Name, description: payload.Description);
-            return TypedResults.Created($"/watchlists/{newWatchlist.Id}", new WatchlistDTO(newWatchlist));
+            return TypedResults.Ok(new WatchlistDTO(watchlist));
         }
     }
 }
