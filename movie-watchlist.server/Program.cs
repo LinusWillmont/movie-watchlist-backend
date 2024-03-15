@@ -1,36 +1,38 @@
 using Microsoft.EntityFrameworkCore;
 using movie_watchlist.server.Data;
+using movie_watchlist.server.Endpoints;
+using movie_watchlist.server.Repositories.watchlist;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<IWatchlistRepo, WatchlistRepo>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<WatchlistsContext>(options =>
 {
-    //TODO: Add correct connection string
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ElephantConnectionSting"));
 
     options.EnableDetailedErrors();
 });
 
 var app = builder.Build();
 
-/*
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-*/
-
+//if (app.Environment.IsDevelopment())
+//{
 app.UseSwagger();
 app.UseSwaggerUI();
-
+//}
 app.UseHttpsRedirection();
 
+app.ConfigureWatchlistEndpoints();
+
+app.Run();
+
+
+/*
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -50,10 +52,11 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+*/
 
-app.Run();
-
+/*
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+*/
