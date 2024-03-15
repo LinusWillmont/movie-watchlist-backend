@@ -12,8 +12,8 @@ using movie_watchlist.server.Data;
 namespace movie_watchlist.server.Migrations
 {
     [DbContext(typeof(WatchlistsContext))]
-    [Migration("20240314130513_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240315104022_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,12 @@ namespace movie_watchlist.server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
+                    b.Property<int?>("WatchlistId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WatchlistId");
 
                     b.ToTable("movies");
                 });
@@ -260,6 +265,13 @@ namespace movie_watchlist.server.Migrations
                     b.ToTable("watchlists_movies");
                 });
 
+            modelBuilder.Entity("movie_watchlist.server.Models.Movie", b =>
+                {
+                    b.HasOne("movie_watchlist.server.Models.Watchlist", null)
+                        .WithMany("Movies")
+                        .HasForeignKey("WatchlistId");
+                });
+
             modelBuilder.Entity("movie_watchlist.server.Models.UserMovie", b =>
                 {
                     b.HasOne("movie_watchlist.server.Models.Movie", "Movie")
@@ -333,6 +345,8 @@ namespace movie_watchlist.server.Migrations
 
             modelBuilder.Entity("movie_watchlist.server.Models.Watchlist", b =>
                 {
+                    b.Navigation("Movies");
+
                     b.Navigation("WatchlistMovie");
                 });
 #pragma warning restore 612, 618

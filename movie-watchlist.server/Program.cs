@@ -1,3 +1,4 @@
+using api_cinema_challenge.Data;
 using Microsoft.EntityFrameworkCore;
 using movie_watchlist.server.Data;
 using movie_watchlist.server.Endpoints;
@@ -28,6 +29,8 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.ConfigureWatchlistEndpoints();
+
+app.ApplyProjectMigrations();
 
 app.Run();
 
