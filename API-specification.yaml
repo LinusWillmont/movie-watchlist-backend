@@ -1,0 +1,202 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Watchlist API"
+  description: "API for managing user watchlists and their movies."
+host: "localhost:3000"
+basePath: "/"
+schemes:
+  - "http"
+paths:
+  /watchlists:
+    post:
+      summary: "Create a watchlist"
+      description: "Creates a new watchlist."
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Watchlist to be added"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "name"
+              - "userId"
+            properties:
+              name:
+                type: "string"
+              description:
+                type: "string"
+              userId:
+                type: "integer"
+      responses:
+        200:
+          description: "Newly created watchlist"
+          schema:
+            $ref: "#/definitions/Watchlist"
+    get:
+      summary: "Get all watchlists"
+      responses:
+        200:
+          description: "allWatchlists"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Watchlists"
+
+  /watchlists/{watchlistId}:
+    get:
+      summary: "Get a watchlist by ID"
+      description: "Returns a single watchlist."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "A single watchlist"
+          schema:
+            $ref: "#/definitions/Watchlist"
+
+    put:
+      summary: "Update watchlist metadata"
+      description: "Update the name and description of a watchlist."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          description: "Watchlist to be added"
+          schema:
+            type: "object"
+            properties:
+              Title:
+                type: "string"
+              description:
+                type: "string"
+
+      responses:
+        200:
+          description: "The updated watchlist data"
+
+  /user/{userId}/watchlists:
+    get:
+      summary: "Get watchlists by user ID"
+      description: "Returns watchlists for a specific user."
+      parameters:
+        - name: "userId"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "An array of watchlists"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/WatchlistsByOneUser"
+  /watchlists/{watchlistId}/movies:
+    put:
+      summary: "Add a movie to a watchlist"
+      description: "Adds a movie to the specified watchlist."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          description: "Watchlist to be added"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "movieId"
+            properties:
+              movieId:
+                type: "integer"
+
+      responses:
+        200:
+          description: "Success message"
+    delete:
+      summary: "Remove a movie from a watchlist"
+      description: "Removes a movie from the specified watchlist."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "body"
+          description: "Watchlist to be added"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - "movieId"
+            properties:
+              movieId:
+                type: "integer"
+      responses:
+        200:
+          description: "Success message"
+definitions:
+  Watchlist:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 1
+      userId:
+        type: "integer"
+        example: 1
+      name:
+        type: "string"
+        example: "Boat Movies"
+      description:
+        type: "string"
+        example: "A collection of movies which contains boats"
+      movies:
+        type: "array"
+        items:
+          type: "integer"
+        example: [2043, 231, 884]
+  Watchlists:
+    type: "array"
+    items:
+      $ref: "#/definitions/Watchlist"
+    example:
+      - id: 12345
+        userId: 67890
+        name: "Johnny's playlist"
+        description: "A collection of Johnny's favorite movies."
+        movies: [101, 202, 303]
+      - id: 23456
+        userId: 67891
+        name: "Sally's playlist"
+        description: "A collection of Sally's favorite movies."
+        movies: [404, 505, 606]
+  WatchlistsByOneUser:
+    type: "array"
+    items:
+      $ref: "#/definitions/Watchlist"
+    properties:
+      property:
+        type: "integer"
+    example:
+      - id: 12345
+        userId: 2
+        name: "Johnny's playlist"
+        description: "A collection of Johnny's favorite movies."
+        movies: [101, 202, 303]
+      - id: 23456
+        userId: 2
+        name: "Johnnys's summer flicks"
+        description: "A collection of my fav summer movies."
+        movies: [404, 505, 606]
