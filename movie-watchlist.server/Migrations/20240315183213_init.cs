@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace movie_watchlist.server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,8 +68,6 @@ namespace movie_watchlist.server.Migrations
                 name: "users_movies",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     movie_id = table.Column<int>(type: "integer", nullable: false),
                     seen = table.Column<bool>(type: "boolean", nullable: false),
@@ -80,7 +78,7 @@ namespace movie_watchlist.server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users_movies", x => x.id);
+                    table.PrimaryKey("PK_users_movies", x => new { x.movie_id, x.user_id });
                     table.ForeignKey(
                         name: "FK_users_movies_movies_movie_id",
                         column: x => x.movie_id,
@@ -99,8 +97,6 @@ namespace movie_watchlist.server.Migrations
                 name: "users_watchlists",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     watchlist_id = table.Column<int>(type: "integer", nullable: false),
                     archived = table.Column<bool>(type: "boolean", nullable: false),
@@ -110,7 +106,7 @@ namespace movie_watchlist.server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users_watchlists", x => x.id);
+                    table.PrimaryKey("PK_users_watchlists", x => new { x.user_id, x.watchlist_id });
                     table.ForeignKey(
                         name: "FK_users_watchlists_users_user_id",
                         column: x => x.user_id,
@@ -129,8 +125,6 @@ namespace movie_watchlist.server.Migrations
                 name: "watchlists_movies",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     watchlist_id = table.Column<int>(type: "integer", nullable: false),
                     movie_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -138,7 +132,7 @@ namespace movie_watchlist.server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_watchlists_movies", x => x.id);
+                    table.PrimaryKey("PK_watchlists_movies", x => new { x.movie_id, x.watchlist_id });
                     table.ForeignKey(
                         name: "FK_watchlists_movies_movies_movie_id",
                         column: x => x.movie_id,
@@ -154,29 +148,14 @@ namespace movie_watchlist.server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_movies_movie_id",
-                table: "users_movies",
-                column: "movie_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_users_movies_user_id",
                 table: "users_movies",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_watchlists_user_id",
-                table: "users_watchlists",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_users_watchlists_watchlist_id",
                 table: "users_watchlists",
                 column: "watchlist_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_watchlists_movies_movie_id",
-                table: "watchlists_movies",
-                column: "movie_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_watchlists_movies_watchlist_id",

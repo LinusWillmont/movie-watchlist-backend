@@ -9,6 +9,21 @@ namespace movie_watchlist.server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Add model relations
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Movies)
+                .WithMany(e => e.Users)
+                .UsingEntity<UserMovie>();
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Watchlists)
+                .WithMany(e => e.Users)
+                .UsingEntity<UserWatchlist>();
+
+            modelBuilder.Entity<Watchlist>()
+                .HasMany(e => e.Movies)
+                .WithMany(e => e.Watchlists)
+                .UsingEntity<WatchlistMovie>();
+
             // this.Database.EnsureCreated();
         }
 

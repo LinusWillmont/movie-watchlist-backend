@@ -13,7 +13,7 @@ namespace movie_watchlist.server.Repositories.watchlist
             _db = db;
         }
 
-        public async Task<Watchlist?> CreateWatchlistAsync(string name, string description)
+        public async Task<Watchlist> CreateWatchlistAsync(string name, string description)
         {
             var watchlist = await _db.Watchlists.AddAsync(new Watchlist { Name = name, Description = description });
             await _db.SaveChangesAsync();
@@ -35,35 +35,35 @@ namespace movie_watchlist.server.Repositories.watchlist
 
         public async Task<Watchlist?> GetWatchlistByIdAsync(int watchlistId)
         {
-            var watchlist = await _db.Watchlists.FirstOrDefaultAsync(watchlist => watchlist.Id.Equals(watchlistId));
+            var watchlist = await _db.Watchlists.Include(watchlist => watchlist.Movies).FirstOrDefaultAsync(watchlist => watchlist.Id.Equals(watchlistId));
             return watchlist;
         }
 
         public async Task<List<Watchlist>> GetWatchlistsAsync()
         {
-            var watchlists = await _db.Watchlists.ToListAsync();
+            var watchlists = await _db.Watchlists.Include(watchlist => watchlist.Movies).ToListAsync();
             return watchlists;
         }
 
         public async Task<Watchlist?> UpdateWatchlistAsync(int watchlistId, string name, string description, List<int> movieIDs)
         {
-            var watchlist = await _db.Watchlists.Include(watchlist => watchlist.Movies)
-                .FirstOrDefaultAsync(watchlist => watchlist.Id.Equals(watchlistId));
+            var watchlist = await GetWatchlistByIdAsync(watchlistId);
 
             if (watchlist == null)
             {
                 return null;
             }
 
-            updateMovies();
-
-
+            watchlist.Name = name;
+            watchlist.Description = description;
+            watchlist.UpdatedAt = DateTime.UtcNow;
+            await updateMovies();
 
             await _db.SaveChangesAsync();
 
             return watchlist;
 
-            async void updateMovies()
+            async Task updateMovies()
             {
                 watchlist.Movies.Clear();
                 foreach (var movieID in movieIDs)
