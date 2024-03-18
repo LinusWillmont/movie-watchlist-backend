@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movie_watchlist.server.DTOs;
 using movie_watchlist.server.Models.Payloads.WatchlistPayloads;
+using movie_watchlist.server.Repositories.movie;
 using movie_watchlist.server.Repositories.watchlist;
 
 namespace movie_watchlist.server.Endpoints
@@ -95,7 +96,7 @@ namespace movie_watchlist.server.Endpoints
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        static private async Task<IResult> AddMovieToWatchlist(IWatchlistRepo repository, int watchlistId, WatchlistUpdateMoviePayload payload)
+        static private async Task<IResult> AddMovieToWatchlist(IWatchlistRepo watchlistRepo, IMovieRepo movieRepo, int watchlistId, WatchlistUpdateMoviePayload payload)
         {
             string payloadCheckResponse = payload.CheckPayload();
             if (payloadCheckResponse != string.Empty)
@@ -103,13 +104,13 @@ namespace movie_watchlist.server.Endpoints
                 return TypedResults.BadRequest(payloadCheckResponse);
             }
 
-            var watchlistToUpdate = await repository.GetWatchlistByIdAsync(watchlistId);
+            var watchlistToUpdate = await watchlistRepo.GetWatchlistByIdAsync(watchlistId);
             if (watchlistToUpdate == null)
             {
                 return TypedResults.NotFound("Watchlist not found");
             }
 
-            //TODO: Check that the movie exists in the db if not, add it!
+            await movieRepo.AddMovieAsync(payload.MovieId, payload.MovieName);
 
             var watchlistMovieIDs = watchlistToUpdate.Movies.Select(m => m.Id).ToList();
 
@@ -120,7 +121,7 @@ namespace movie_watchlist.server.Endpoints
 
             watchlistMovieIDs.Add(payload.MovieId);
 
-            var updatedWatchlist = await repository.UpdateWatchlistAsync(
+            var updatedWatchlist = await watchlistRepo.UpdateWatchlistAsync(
                 watchlistId,
                 watchlistToUpdate.Name,
                 watchlistToUpdate.Description,

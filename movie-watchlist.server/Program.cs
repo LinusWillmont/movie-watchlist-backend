@@ -2,11 +2,13 @@ using api_cinema_challenge.Data;
 using Microsoft.EntityFrameworkCore;
 using movie_watchlist.server.Data;
 using movie_watchlist.server.Endpoints;
+using movie_watchlist.server.Repositories.movie;
 using movie_watchlist.server.Repositories.watchlist;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IWatchlistRepo, WatchlistRepo>();
+builder.Services.AddScoped<IMovieRepo, MovieRepo>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
