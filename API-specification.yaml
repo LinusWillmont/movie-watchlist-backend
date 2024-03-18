@@ -154,9 +154,12 @@ paths:
             type: "object"
             required:
               - "movieId"
+              - "movieName"
             properties:
               movieId:
                 type: "integer"
+              movieName:
+                type: "string"
       responses:
         200:
           description: "Success message"
