@@ -7,6 +7,17 @@ using movie_watchlist.server.Repositories.watchlist;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddScoped<IWatchlistRepo, WatchlistRepo>();
 builder.Services.AddScoped<IMovieRepo, MovieRepo>();
 
@@ -29,6 +40,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 //}
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.ConfigureWatchlistEndpoints();
 
