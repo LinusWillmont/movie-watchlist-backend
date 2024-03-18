@@ -44,12 +44,7 @@ namespace movie_watchlist.server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<int?>("WatchlistId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("WatchlistId");
 
                     b.ToTable("movies");
                 });
@@ -106,12 +101,13 @@ namespace movie_watchlist.server.Migrations
 
             modelBuilder.Entity("movie_watchlist.server.Models.UserMovie", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("MovieId")
                         .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnName("movie_id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("Comment")
                         .HasColumnType("text")
@@ -120,10 +116,6 @@ namespace movie_watchlist.server.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("integer")
-                        .HasColumnName("movie_id");
 
                     b.Property<float?>("Rating")
                         .HasColumnType("real")
@@ -137,13 +129,7 @@ namespace movie_watchlist.server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
+                    b.HasKey("MovieId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -152,12 +138,13 @@ namespace movie_watchlist.server.Migrations
 
             modelBuilder.Entity("movie_watchlist.server.Models.UserWatchlist", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UserId")
                         .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnName("user_id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("WatchlistId")
+                        .HasColumnType("integer")
+                        .HasColumnName("watchlist_id");
 
                     b.Property<bool>("Archived")
                         .HasColumnType("boolean")
@@ -175,17 +162,7 @@ namespace movie_watchlist.server.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.Property<int>("WatchlistId")
-                        .HasColumnType("integer")
-                        .HasColumnName("watchlist_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "WatchlistId");
 
                     b.HasIndex("WatchlistId");
 
@@ -230,43 +207,27 @@ namespace movie_watchlist.server.Migrations
 
             modelBuilder.Entity("movie_watchlist.server.Models.WatchlistMovie", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
                     b.Property<int>("MovieId")
                         .HasColumnType("integer")
                         .HasColumnName("movie_id");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.Property<int>("WatchlistId")
                         .HasColumnType("integer")
                         .HasColumnName("watchlist_id");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
-                    b.HasIndex("MovieId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("MovieId", "WatchlistId");
 
                     b.HasIndex("WatchlistId");
 
                     b.ToTable("watchlists_movies");
-                });
-
-            modelBuilder.Entity("movie_watchlist.server.Models.Movie", b =>
-                {
-                    b.HasOne("movie_watchlist.server.Models.Watchlist", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("WatchlistId");
                 });
 
             modelBuilder.Entity("movie_watchlist.server.Models.UserMovie", b =>
@@ -297,7 +258,7 @@ namespace movie_watchlist.server.Migrations
                         .IsRequired();
 
                     b.HasOne("movie_watchlist.server.Models.Watchlist", "Watchlist")
-                        .WithMany()
+                        .WithMany("WatchlistUsers")
                         .HasForeignKey("WatchlistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -342,9 +303,9 @@ namespace movie_watchlist.server.Migrations
 
             modelBuilder.Entity("movie_watchlist.server.Models.Watchlist", b =>
                 {
-                    b.Navigation("Movies");
-
                     b.Navigation("WatchlistMovie");
+
+                    b.Navigation("WatchlistUsers");
                 });
 #pragma warning restore 612, 618
         }

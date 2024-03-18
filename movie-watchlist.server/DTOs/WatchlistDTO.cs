@@ -18,7 +18,7 @@ namespace movie_watchlist.server.DTOs
             Description = watchlist.Description;
             foreach (var movie in watchlist.Movies)
             {
-                MovieIDs.Append(movie.Id);
+                MovieIDs.Add(movie.Id);
             }
         }
 

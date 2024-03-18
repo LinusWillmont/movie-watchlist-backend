@@ -15,6 +15,9 @@ namespace movie_watchlist.server.Endpoints
             watchlists.MapGet("", GetWatchlists);
             watchlists.MapGet("/{watchlistId}", GetWatchlistById);
             watchlists.MapPut("/{watchlistId}", UpdateWatchlistMetadata);
+            //app.MapGet("/users/{userId}/watchlists", GetUserWatchliststs); stretch goal
+            watchlists.MapPut("/{watchlistId}/movies/add", AddMovieToWatchlist);
+            watchlists.MapPut("/{watchlistId}/movies/remove", RemoveMovieFromWatchlist);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -62,9 +65,16 @@ namespace movie_watchlist.server.Endpoints
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         static private async Task<IResult> UpdateWatchlistMetadata(IWatchlistRepo repository, int watchlistId, WatchlistMetadataPayload payload)
         {
+            string payloadCheckResponse = payload.CheckPayload();
+            if (payloadCheckResponse != string.Empty)
+            {
+                return TypedResults.BadRequest(payloadCheckResponse);
+            }
+
             var watchlistToUpdate = await repository.GetWatchlistByIdAsync(watchlistId);
             if (watchlistToUpdate == null) { return TypedResults.NotFound($"Watchlist with id:{watchlistId} not found"); }
 
@@ -79,6 +89,80 @@ namespace movie_watchlist.server.Endpoints
 
 
             return TypedResults.Ok(new WatchlistDTO(updatedWatchlist));
+        }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        static private async Task<IResult> AddMovieToWatchlist(IWatchlistRepo repository, int watchlistId, WatchlistUpdateMoviePayload payload)
+        {
+            string payloadCheckResponse = payload.CheckPayload();
+            if (payloadCheckResponse != string.Empty)
+            {
+                return TypedResults.BadRequest(payloadCheckResponse);
+            }
+
+            var watchlistToUpdate = await repository.GetWatchlistByIdAsync(watchlistId);
+            if (watchlistToUpdate == null)
+            {
+                return TypedResults.NotFound("Watchlist not found");
+            }
+
+            //TODO: Check that the movie exists in the db if not, add it!
+
+            var watchlistMovieIDs = watchlistToUpdate.Movies.Select(m => m.Id).ToList();
+
+            if (watchlistMovieIDs.Contains(payload.MovieId))
+            {
+                return TypedResults.BadRequest("Movie already exists in watchlist");
+            }
+
+            watchlistMovieIDs.Add(payload.MovieId);
+
+            var updatedWatchlist = await repository.UpdateWatchlistAsync(
+                watchlistId,
+                watchlistToUpdate.Name,
+                watchlistToUpdate.Description,
+                watchlistMovieIDs
+            );
+
+            return TypedResults.Ok(new WatchlistDTO(updatedWatchlist!));
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        static private async Task<IResult> RemoveMovieFromWatchlist(IWatchlistRepo repository, int watchlistId, WatchlistUpdateMoviePayload payload)
+        {
+            string payloadCheckResponse = payload.CheckPayload();
+            if (payloadCheckResponse != string.Empty)
+            {
+                return TypedResults.BadRequest(payloadCheckResponse);
+            }
+
+            var watchlistToUpdate = await repository.GetWatchlistByIdAsync(watchlistId);
+            if (watchlistToUpdate == null)
+            {
+                return TypedResults.NotFound("Watchlist not found");
+            }
+
+            var watchlistMovieIDs = watchlistToUpdate.Movies.Select(m => m.Id).ToList();
+            var foundMovieInWatchlist = watchlistMovieIDs.Remove(payload.MovieId);
+
+            if (!foundMovieInWatchlist)
+            {
+                return TypedResults.BadRequest($"Movie with id:{payload.MovieId} not found in watchlist with id:{watchlistId}");
+            }
+
+            var updatedWatchlist = await repository.UpdateWatchlistAsync(
+                watchlistId,
+                watchlistToUpdate.Name,
+                watchlistToUpdate.Description,
+                watchlistMovieIDs
+            );
+
+            return TypedResults.Ok(new WatchlistDTO(updatedWatchlist!));
         }
     }
 }
