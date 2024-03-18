@@ -13,11 +13,11 @@ namespace movie_watchlist.server.Models
         public int Id { get; set; }
 
         // References to other tables
+        public List<User> Users { get; } = [];
         public List<UserMovie> UserMovie { get; } = [];
-        // public List<User> Users { get; } = [];
 
+        public List<Watchlist> Watchlists { get; } = [];
         public List<WatchlistMovie> WatchlistMovie { get; } = [];
-        //public List<Watchlist> Watchlist { get; } = [];
 
         //Properties
         [Required]

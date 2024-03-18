@@ -6,12 +6,6 @@ namespace movie_watchlist.server.Models
     [Table("users_watchlists")]
     public class UserWatchlist
     {
-        // ids
-        [Key]
-        [Required]
-        [Column("id")]
-        public int Id { get; set; }
-
         // References to other tables
         [ForeignKey(nameof(User))]
         [Required]
