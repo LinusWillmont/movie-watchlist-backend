@@ -29,6 +29,7 @@ namespace movie_watchlist.server.Repositories.watchlist
             }
 
             _db.Watchlists.Remove(watchlist);
+            await _db.SaveChangesAsync();
 
             return watchlist;
         }
