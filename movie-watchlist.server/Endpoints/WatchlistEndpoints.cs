@@ -19,6 +19,7 @@ namespace movie_watchlist.server.Endpoints
             //app.MapGet("/users/{userId}/watchlists", GetUserWatchliststs); stretch goal
             watchlists.MapPut("/{watchlistId}/movies/add", AddMovieToWatchlist);
             watchlists.MapPut("/{watchlistId}/movies/remove", RemoveMovieFromWatchlist);
+            watchlists.MapDelete("/{watchlistId}", DeleteWatchlistById);
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -164,6 +165,18 @@ namespace movie_watchlist.server.Endpoints
             );
 
             return TypedResults.Ok(new WatchlistDTO(updatedWatchlist!));
+        }
+
+        static private async Task<IResult> DeleteWatchlistById(IWatchlistRepo repository, int watchlistId)
+        {
+            var watchlist = await repository.DeleteWatchlistAsync(watchlistId);
+
+            if(watchlist == null)
+            {
+                return TypedResults.NotFound($"Watchlist with ID {watchlistId} not found");
+            }
+
+            return TypedResults.Ok(new WatchlistDTO(watchlist));
         }
     }
 }
