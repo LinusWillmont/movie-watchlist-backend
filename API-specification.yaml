@@ -67,7 +67,6 @@ paths:
             $ref: "#/definitions/Watchlist"
         404:
           description: "Watchlist with id:{watchlistId} not found"
-
     put:
       summary: "Update watchlist metadata"
       description: "Update the name and description of a watchlist."
@@ -86,7 +85,6 @@ paths:
                 type: "string"
               description:
                 type: "string"
-
       responses:
         200:
           description: "The updated watchlist data"
@@ -96,47 +94,21 @@ paths:
           description: "Watchlist name can't be empty"
         404:
           description: "Watchlist with id:{watchlistId} not found"
-
-  # /user/{userId}/watchlists:
-  #   get:
-  #     summary: "Get watchlists by user ID"
-  #     description: "Returns watchlists for a specific user."
-  #     parameters:
-  #       - name: "userId"
-  #         in: "path"
-  #         required: true
-  #         type: "integer"
-  #     responses:
-  #       200:
-  #         description: "An array of watchlists"
-  #         schema:
-  #           type: "array"
-  #           items:
-  #             $ref: "#/definitions/WatchlistsByOneUser"
-  # /watchlists/{watchlistId}/movies:
-  #   put:
-  #     summary: "Add a movie to a watchlist"
-  #     description: "Adds a movie to the specified watchlist."
-  #     parameters:
-  #       - name: "watchlistId"
-  #         in: "path"
-  #         required: true
-  #         type: "integer"
-  #       - in: "body"
-  #         name: "body"
-  #         description: "Watchlist to be added"
-  #         required: true
-  #         schema:
-  #           type: "object"
-  #           required:
-  #             - "movieId"
-  #           properties:
-  #             movieId:
-  #               type: "integer"
-
-  #     responses:
-  #       200:
-  #         description: "Success message"
+    delete:
+      summary: "Delete a watchlist by ID"
+      description: "Deletes a watchlist by its ID."
+      parameters:
+        - name: "watchlistId"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Watchlist deleted successfully"
+          schema:
+            $ref: "#/definitions/Watchlist"
+        404:
+          description: "Watchlist with id:{watchlistId} not found"
   /watchlists/{watchlistId}/movies/add:
     put:
       summary: "Add a movie to a watchlist"
